@@ -6,19 +6,28 @@ import (
 )
 
 func main() {
-	// Initial 
+	// Creating the main application
 	app := tview.NewApplication()
+
+	// Creating the list that will hold the .desktop files
 	desktopFilesList := tview.NewList()
-	layout := getLayout()
+	desktopFilesList.Box = tview.NewBox().SetBorder(true).SetTitle("  ged  ").SetTitleAlign(tview.AlignCenter).SetBorderPadding(0,0,1,1)
+
+	// Creating the layout, it will be a grid layout with 9x9
+	layout := tview.NewGrid().SetRows(0,0,0,0,0,0,0,0,0).SetColumns(0,0,0,0,0,0,0,0,0)
+	layout.Box = tview.NewBox().SetBackgroundColor(tcell.NewRGBColor(20, 20, 20))
+
+	// Creating the page logic in order to add pop-ups
 	pages := tview.NewPages()
 	pages.AddPage("main", layout, true, true)
 
-	layout.Box = tview.NewBox().SetBackgroundColor(tcell.ColorGray)
+	// Getting the desktop file names
 	names, err := GetDesktopFiles()
 	if err != nil {
 		panic(err)
 	}
 
+	// This function structure will be changed and FileOptions function will be used instead.
 	for _, name := range names {
 		desktopFilesList.AddItem(name, "", 0, func() {
 			askModal := tview.NewModal()
@@ -39,6 +48,7 @@ func main() {
 					}
 				}
 			})
+			// This InputCapture mechanism needs to be revised.
 			askModal.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 				if event.Key() == tcell.KeyESC {
 					pages.RemovePage("ask")
@@ -49,9 +59,10 @@ func main() {
 		}).ShowSecondaryText(false)
 	}
 
-	layout.AddItem(desktopFilesList, 1, 1, 1, 1, 0, 0, false)
+	// Adding the list to the grid layout
+	layout.AddItem(desktopFilesList, 1, 1, 7, 7, 0, 0, false)
 
-
+	// Setting up the app
 	app.SetRoot(pages, true).SetFocus(desktopFilesList)
 	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		if event.Key() == tcell.KeyESC {
@@ -63,8 +74,4 @@ func main() {
     if err := app.Run(); err != nil {
         panic(err)
     }
-}
-
-func getLayout() *tview.Grid {
-	return tview.NewGrid().SetRows(0,0,0).SetColumns(0,0,0).SetBorders(true)
 }
