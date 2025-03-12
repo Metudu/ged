@@ -56,12 +56,28 @@ func SetVisibility(filename string, visible bool) error {
 		}
 	}
 	
-
 	if err = cfg.SaveTo(path.Join(desktopFilesLocation, filename)); err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func GetVisibility(filename string) bool {
+	if filename == "" {
+		return false
+	}
+
+	cfg, err := ini.LoadSources(ini.LoadOptions{IgnoreInlineComment: true}, path.Join(desktopFilesLocation, filename))
+	if err != nil {
+		return false
+	}
+
+	if cfg.Section("Desktop Entry").HasKey("NoDisplay") && cfg.Section("Desktop Entry").Key("NoDisplay").String() == "true" {
+		return false
+	}
+
+	return true
 }
 
 func checkIfDirectoryExists(directory string) bool {
