@@ -1,6 +1,8 @@
 package main
 
 import (
+	"strings"
+
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
@@ -36,7 +38,7 @@ func main() {
 
 	// This function structure will be changed and FileOptions function will be used instead.
 	for _, name := range names {
-		desktopFilesList.AddItem(name, "", 0, func() {FileOptions(name)}).ShowSecondaryText(false)
+		desktopFilesList.AddItem(strings.Split(name, ".desktop")[0], "", 0, func() {FileOptions(name)}).ShowSecondaryText(false)
 	}
 
 	// Adding the list to the grid layout

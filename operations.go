@@ -4,6 +4,7 @@ import (
 	"errors"
 	"os"
 	"path"
+	"strings"
 
 	"gopkg.in/ini.v1"
 )
@@ -23,7 +24,10 @@ func GetDesktopFiles() ([]string, error) {
 
 		var files []string
 		for _, val := range entries {
-			files = append(files, val.Name())	
+			// Add only the .desktop files
+			if strings.Contains(val.Name(), ".desktop") {
+				files = append(files, val.Name())	
+			}
 		}
 
 		return files, nil
